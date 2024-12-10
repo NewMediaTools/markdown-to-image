@@ -17,8 +17,8 @@ import {
   Md2PosterFooter,
 } from "./markdown2poster";
 import "@/components/markdown2poster/index.css";
-import { RadioGroup, RadioGroupItem } from "@radix-ui/react-radio-group";
-import { clsx } from "clsx";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { Label } from "./ui/label";
 
 const Textarea: React.FC<TextareaHTMLAttributes<HTMLTextAreaElement>> = ({
   onChange,
@@ -35,6 +35,35 @@ const Textarea: React.FC<TextareaHTMLAttributes<HTMLTextAreaElement>> = ({
     />
   );
 };
+
+function RadioGroups({
+  list,
+  onChange,
+  defaultValue,
+}: {
+  list: string[];
+  onChange: (value) => void;
+  defaultValue: string;
+}) {
+  // const list = ["auto", "16/9", "1/1", "4/3"];
+  return (
+    <RadioGroup
+      defaultValue={defaultValue}
+      onValueChange={(v) => {
+        onChange?.(v);
+      }}
+    >
+      {list.map((item) => {
+        return (
+          <div className="flex items-center space-x-2 w-32" key={item}>
+            <RadioGroupItem value={item} id={item} />
+            <Label htmlFor="r1">{item}</Label>
+          </div>
+        );
+      })}
+    </RadioGroup>
+  );
+}
 
 const defaultMd = `**The Odd Case at the Grave**
 
@@ -108,34 +137,38 @@ export default function Editor() {
   return (
     <div>
       <ToastContainer />
-      <div className="flex items-center gap-2">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1">
-            <span className="text-sm">Content Font Size</span>
-            <RadioGroup
-              defaultValue={contentFontSize}
-              onValueChange={(v) => setContentFontSize(v)}
-            >
-              <RadioGroupItem value="text-xs">xs</RadioGroupItem>
-              <RadioGroupItem value="text-sm">sm</RadioGroupItem>
-              <RadioGroupItem value="text-base">base</RadioGroupItem>
-              <RadioGroupItem value="text-lg">lg</RadioGroupItem>
-              <RadioGroupItem value="text-xl">xl</RadioGroupItem>
-              <RadioGroupItem value="text-2xl">2xl</RadioGroupItem>
-              <RadioGroupItem value="text-3xl">3xl</RadioGroupItem>
-            </RadioGroup>
-          </div>
+      <div className="flex items-center gap-2 mt-4">
+        <div className="flex items-center space-x-2">
+          <div className="w-12 text-gray-400">标题:</div>
+          <RadioGroups list={["text-lg", "text-xl", "text-2xl", "text-3xl"]} onChange={setTitleFontSize} defaultValue="text-xl" />
         </div>
-        
-
-        <input
-          type="range"
-          className="w-full h-2 bg-gray-400 rounded-lg appearance-none cursor-pointer"
-          min="20"
-          max="80"
-          value={Number(editorWidth.replace("%", ""))}
-          onChange={(e) => setEditorWidth(`${e.target.value}%`)}
-        />
+        <div className="flex items-center space-x-2">
+          <div className="w-12 text-gray-400">内容:</div>        
+        <RadioGroups list={["text-lg", "text-xl", "text-2xl", "text-3xl"]} onChange={setContentFontSize} defaultValue="text-lg" />
+        </div>
+        <div className="flex items-center space-x-4">
+        <div className="w-20 text-gray-400">编辑器宽度:</div>
+          <input
+            type="range"
+            className="w-full h-2 bg-gray-400 rounded-lg appearance-none cursor-pointer"
+            min="20"
+            max="80"
+            value={Number(editorWidth.replace("%", ""))}
+            onChange={(e) => setEditorWidth(`${e.target.value}%`)}
+          />
+        </div>
+          <Button
+            className=" rounded-xl"
+            onClick={handleCopyFromChild}
+            {...(copyLoading ? { disabled: true } : {})}
+          >
+            {copyLoading ? (
+              <LoaderCircle className="w-4 h-4 mr-1 animate-spin" />
+            ) : (
+              <Copy className="w-4 h-4 mr-1" />
+            )}
+            Copy Image
+          </Button>
       </div>
       <ScrollArea className="h-[96vh] w-full border-2 border-gray-900 rounded-xl my-4 relative">
         <div className="flex flex-row h-full ">
@@ -169,20 +202,6 @@ export default function Editor() {
                 <Md2PosterFooter className="text-center"></Md2PosterFooter>
               </Md2Poster>
             </div>
-          </div>
-          <div className="absolute top-4 right-4 flex flex-row gap-2 opacity-80 hover:opacity-100 transition-all">
-            <Button
-              className=" rounded-xl"
-              onClick={handleCopyFromChild}
-              {...(copyLoading ? { disabled: true } : {})}
-            >
-              {copyLoading ? (
-                <LoaderCircle className="w-4 h-4 mr-1 animate-spin" />
-              ) : (
-                <Copy className="w-4 h-4 mr-1" />
-              )}
-              Copy Image
-            </Button>
           </div>
         </div>
       </ScrollArea>
