@@ -2,6 +2,7 @@
 import MdHome from '@/markdown/home.mdx'
 import Section from '@/components/Section'
 import dynamic from 'next/dynamic'
+import Docs from './docs/page'
 
 const Editor = dynamic(() => import('@/components/Editor'), {
  ssr: false,
@@ -9,12 +10,8 @@ const Editor = dynamic(() => import('@/components/Editor'), {
 export default function Home() {
   return (
     <div>
+      {/* <Docs/> */}
       <Section className='relative'><Editor /></Section>
-      <Section className="py-4">
-        <article className="prose lg:prose-xl">
-          <MdHome />
-        </article>
-      </Section>
     </div>
   )
 }

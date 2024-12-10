@@ -9,9 +9,6 @@ const EditProps = dynamic(() => import('./editProps'), {
 export default function Docs() {
   return (
     <Section className="py-4">
-      <article className="prose lg:prose-xl">
-        <MdDocs />
-      </article>
       <EditProps />
     </Section>
   )
